@@ -4,9 +4,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="susuyummy-web-crawlers",
-    version="0.1.2",
-    description="A collection of web crawlers for various websites",
+    name="ptt-crawler",
+    version="0.1.4",
+    description="A web crawler for PTT Gossip board",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="susuyummy",

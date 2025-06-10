@@ -28,6 +28,12 @@ jobs:
     - name: Build package
       run: python -m build
     
+    - name: Configure pip
+      run: |
+        echo "[global]" >> ~/.pip/pip.conf
+        echo "index-url = https://pypi.pkg.github.com/susuyummy" >> ~/.pip/pip.conf
+        echo "extra-index-url = https://pypi.org/simple" >> ~/.pip/pip.conf
+    
     - name: Publish to GitHub Packages
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,38 +1,54 @@
-# Web Crawlers
+# PTT Crawler
 
-A collection of web crawlers for various websites.
+一個簡單的 PTT 八卦版爬蟲套件。
 
-## Installation
+## 安裝
 
 ```bash
-pip install web-crawlers
+pip install git+https://github.com/susuyummy/web-crawlers.git
 ```
 
-## Usage
-
-### PTT Gossip Crawler
+## 使用方法
 
 ```python
 from web_crawlers import PTTGossipCrawler
 
-# Create crawler instance
+# 創建爬蟲實例
 crawler = PTTGossipCrawler()
 
-# Crawl articles
+# 爬取 1 頁文章
 articles = crawler.crawl(pages=1)
 
-# Save to Excel
+# 保存到 Excel
 crawler.save_to_excel(articles)
+
+# 印出結果
+print("總共爬取到", len(articles), "篇文章")
+for article in articles:
+    print("\n" + "="*50)
+    print("標題:", article.title)
+    print("作者:", article.author)
+    print("日期:", article.date)
+    print("連結:", article.url)
+    print("內容預覽:", article.content[:100], "...")
 ```
 
-## Features
+## 功能特點
 
-- PTT Gossip board crawler
-- Save articles to SQLite database
-- Export to Excel file
-- Automatic content cleaning
-- Rate limiting to avoid being blocked
+- 自動爬取 PTT 八卦版文章
+- 支援分頁爬取
+- 自動保存到 SQLite 資料庫
+- 導出到 Excel 文件
+- 自動內容清理
+- 速率限制避免被封鎖
 
-## License
+## 依賴套件
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+- requests>=2.31.0
+- beautifulsoup4>=4.12.0
+- pandas>=2.1.0
+- openpyxl>=3.1.0
+
+## 授權
+
+MIT License 
