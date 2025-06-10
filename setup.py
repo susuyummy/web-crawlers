@@ -4,9 +4,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="ptt-crawler",
-    version="0.1.4",
-    description="A web crawler for PTT Gossip board",
+    name="ptt-gossip-crawler",
+    version="0.1.5",
+    description="A simple web crawler for PTT Gossip board",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="susuyummy",
@@ -21,6 +21,11 @@ setup(
         "openpyxl>=3.1.0",
     ],
     python_requires=">=3.8",
+    entry_points={
+        'console_scripts': [
+            'ptt-crawler=ptt_crawler_cli:main',
+        ],
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
@@ -30,7 +35,10 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Topic :: Internet :: WWW/HTTP",
+        "Topic :: Software Development :: Libraries :: Python Modules",
     ],
+    keywords="ptt, crawler, web-scraping, python",
     project_urls={
         "Bug Reports": "https://github.com/susuyummy/web-crawlers/issues",
         "Source": "https://github.com/susuyummy/web-crawlers",
