@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="web-crawlers",
+    name="susuyummy-web-crawlers",
     version="0.1.0",
     description="A collection of web crawlers for various websites",
     long_description=long_description,
