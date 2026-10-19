@@ -1,70 +1,76 @@
-# 正体能影片整理：第一版索引
+# 正体能影片下載與分類合輯
 
-核對日期：2026-10-19。來源：https://www.douyin.com/user/MS4wLjABAAAAM1_p0rl5_KWjzfP8cs60YEcJxfmTdcnGPA0lIQzjFn4
+本專案依使用者要求，把作者公開作品建立清單、下載原片，並依主題合併成附章節的長片。
 
-首頁顯示939則作品。本版完成10個合集索引及「动作库(一)」20集目錄；尚未完整取得全部作品。
+## 來源與涵蓋範圍
 
-## 合集索引
+- 核對日期：2026-10-19。
+- 作者：正体能；抖音號：2067846244。
+- 作者首頁：https://www.douyin.com/user/MS4wLjABAAAAM1_p0rl5_KWjzfP8cs60YEcJxfmTdcnGPA0lIQzjFn4
+- 首頁顯示939則作品。正常捲動至作品回應的 `has_more=0` 後，實際取得937個不重複作品ID。
+- 其中744支影片、193則圖文。差額2則未由頁面提供，原因未知；不能宣稱已取得全部939則。
+- 影片總片長約9.51小時。193則圖文保留清單，未混入影片合輯。
 
-| 原始名稱 | 頁面顯示集數 | 類別 |
-|---|---:|---|
-| [ji限挤压跟练](https://www.douyin.com/collection/7532515462447138826/1) | 6 | 跟練 |
-| [一个动作评估体态](https://www.douyin.com/collection/7667560759441917978/1) | 3 | 評估 |
-| [一个动作改善系列](https://www.douyin.com/collection/7661632294066587658/1) | 8 | 動作 |
-| [案例分析](https://www.douyin.com/collection/7621192766705371174/1) | 6 | 案例 |
-| [动作库二进阶](https://www.douyin.com/collection/7576255819047110694/1) | 15 | 動作 |
-| [动作库(一)](https://www.douyin.com/collection/7562559769802704923/1) | 20 | 動作 |
-| [体态之整体观](https://www.douyin.com/collection/7532504365609797682/1) | 6 | 觀念 |
-| [功能&体态个人见解](https://www.douyin.com/collection/7513954719765628979/1) | 40 | 觀念 |
-| [下肢骨盆改善](https://www.douyin.com/collection/7513953386362832946/1) | 88 | 下肢與骨盆 |
-| [上肢胸廓改善](https://www.douyin.com/collection/7513951552034310182/1) | 51 | 上肢與胸廓 |
+## 儲存位置
 
-顯示集數合計243；同一作品可能出現在不同合集，尚未去重。
+使用者指定外接磁碟「未命名3」。檔案放在：
 
-## 建議瀏覽路線
+```text
+/Volumes/未命名3/正体能影片整理/
+├── 開始觀看.html
+├── 原始影片/
+├── 分類合輯/
+│   ├── 主題_01.mp4
+│   └── 主題_01.txt
+└── 處理紀錄/
+    ├── 作品清單.json
+    ├── download-state.json
+    ├── merge-state.json
+    ├── processing-status.json
+    ├── pipeline-result.json（流程結束後產生）
+    └── pipeline.log
+```
 
-這是依合集名稱擬定的導覽順序，尚未依影片內容驗證：
+GitHub 保存程式、公開作品清單、分類依據與進度摘要。大型媒體保留在指定外接磁碟；登入狀態、Cookie、簽名下載網址與私有暫存不進入儲存庫。
 
-1. 先看「体态之整体观」，建立作者的基本觀點。
-2. 再用「一个动作评估体态」找對應主題。
-3. 從「动作库(一)」找相關動作，再查看進階動作庫。
-4. 按需要查看上肢胸廓或下肢骨盆合集。
-5. 最後比較案例分析與功能體態見解。
+## 處理方式
 
-## 動作庫（一）已核對目錄
+1. 透過獨立已登入的瀏覽器正常載入作者作品頁，讀取頁面實際回應；依作品ID去重。
+2. 六部並行下載，可中斷後續傳；完成紀錄會略過已成功的原片。
+3. 檢查HTTP內容類型、檔案長度、實際片長及開頭解碼，成功才改為正式檔名。
+4. 依原標題與標籤分類，**尚未逐支觀看內容或查核作者的訓練、健康主張**。這是主題合輯，不是精華摘要或處方。
+5. 同主題依發布時間排列，完整保留每支影片的講解。每部合輯約45分鐘；單支超過45分鐘時保留完整單支。
+6. 統一為720×1280、30fps、H.264/AAC；保留畫面比例，必要時補留白。使用VideoToolbox硬體編碼。
+7. 加入MP4章節及同名文字索引，記錄每段開始時間與原始連結。
+8. 合輯完成後核對片長，做完整音畫解碼檢查，再列為完成。
+9. 外接磁碟未掛載或剩餘空間低於10GB時停止新增媒體，避免寫入內建磁碟或耗盡空間。
 
-- 第1集：[髋关节灵活度改善](https://www.douyin.com/video/7561817990329879835)
-- 第2集：[改善肩关节灵活度](https://www.douyin.com/video/7562177440286690611)
-- 第3集：[恢复骨盆胸廓空间](https://www.douyin.com/collection/7562559769802704923/1)
-- 第4集：[抑制腹直肌](https://www.douyin.com/collection/7562559769802704923/1)
-- 第5集：[抑制腹直肌，恢复胸廓骨盆空间](https://www.douyin.com/collection/7562559769802704923/1)
-- 第6集：[胸廓骨盆灵活度](https://www.douyin.com/collection/7562559769802704923/1)
-- 第7集：[胸廓骨盆灵活性](https://www.douyin.com/collection/7562559769802704923/1)
-- 第8集：[圆肩勿做](https://www.douyin.com/collection/7562559769802704923/1)
-- 第9集：[身体不对称改善](https://www.douyin.com/collection/7562559769802704923/1)
-- 第10集：[重心前移改善](https://www.douyin.com/collection/7562559769802704923/1)
-- 第11集：[改善髋部灵活](https://www.douyin.com/collection/7562559769802704923/1)
-- 第12集：[泡沫轴妙用](https://www.douyin.com/collection/7562559769802704923/1)
-- 第13集：[身体旋转&单侧不适](https://www.douyin.com/collection/7562559769802704923/1)
-- 第14集：[足底筋膜炎](https://www.douyin.com/collection/7562559769802704923/1)
-- 第15集：[二头弯举，打开胸廓空间](https://www.douyin.com/collection/7562559769802704923/1)
-- 第16集：[改善后背紧张，恢复肩灵活性](https://www.douyin.com/collection/7562559769802704923/1)
-- 第17集：[肩胛骨缝紧张](https://www.douyin.com/collection/7562559769802704923/1)
-- 第18集：[农夫行走变式](https://www.douyin.com/collection/7562559769802704923/1)
-- 第19集：[胸廓骨盆旋转](https://www.douyin.com/collection/7562559769802704923/1)
-- 第20集：[胸廓以及肩关节灵活度](https://www.douyin.com/collection/7562559769802704923/1)
+## 執行
 
-## 資料讀取範圍
+此版本使用本機既有工具：Python 3、`agent-browser` 與BlueStacks附帶的FFmpeg。工具路徑位於 `scripts/archive.py`，可依環境調整。抖音登入只用於作品頁讀取；不會上傳登入憑證。
 
-- 合集顯示集數合計243，尚未跨合集去重。
-- 已核對10個合集及動作庫(一)20則目錄標題，不是939則完整清單。
-- 尚未逐支觀看或取得逐字稿；沒有填入內容摘要或訓練處方。
-- 第3至20集連結回到所屬合集，並非已取得的單支影片連結。
+```sh
+python3 scripts/archive.py collect
+python3 scripts/archive.py download --workers 6
+python3 scripts/archive.py merge
+python3 scripts/library.py
+python3 scripts/archive.py status
+```
 
-## 後續完整學習庫欄位
+`collect` 需要先在獨立的 `zhengtineng-archive` 瀏覽器工作階段開啟該作者頁面。下載網址暫存在被忽略的 `.local/`，可能過期；過期需重新載入作品頁。
 
-影片ID、原標題、原始連結、發布日期、片長、所屬合集、身體部位、內容型態、核心重點、動作步驟、作者提到的限制、內容讀取狀態。重點與步驟須在實際觀看或取得可靠逐字稿後填寫。
+下載及自動重試、合併：
 
-## GitHub
+```sh
+python3 scripts/finish_pipeline.py
+```
 
-儲存位置：susuyummy/web-crawlers 儲存庫的 douyin-zhengtineng/ 資料夾。使用已連接的 GitHub 功能上傳；內容僅含公開合集資訊與本版索引。
+僅在沒有其他下載程序執行時使用。若已有本專案下載程序，可透過 `--wait-pid 程序編號` 等它結束後接續，避免同時寫入相同檔案。
+
+## 進度與驗證
+
+目前進度見 [data/processing-status.json](data/processing-status.json)。
+
+已實測：三支原片的下載與片長、音訊檢查；14支營養主題原片合併成1.4分鐘影片、章節與來源索引、完整解碼。已抽查輸出畫面，文字保留，未裁切。
+
+大量下載與其餘合輯仍以實際進度報告為準，不能因程式已啟動就宣稱全部完成。
