@@ -1,15 +1,15 @@
 {
-  "updated_at": "2026-10-19T15:30:44+08:00",
+  "updated_at": "2026-10-19T15:37:36+08:00",
   "profile_count": 939,
   "visible_posts": 937,
   "reached_end": true,
   "missing_vs_profile": 2,
   "videos": 744,
   "photo_posts": 193,
-  "downloaded": 208,
+  "downloaded": 290,
   "failed": 2,
   "compilations": 1,
-  "merged_videos": 14,
+  "merged_videos": 34,
   "all_visible_videos_downloaded": false,
   "all_visible_videos_merged": false,
   "classification_basis": "原標題與標籤；尚未逐支內容審閱",
@@ -26,8 +26,8 @@
   "compilation_list": [
     {
       "name": "17_營養飲食與身體組成_01",
-      "videos": 14,
-      "minutes": 1.39,
+      "videos": 34,
+      "minutes": 3.71,
       "verified_full_decode": true
     }
   ]

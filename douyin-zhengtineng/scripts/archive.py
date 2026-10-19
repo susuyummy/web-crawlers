@@ -28,14 +28,14 @@ RULES = [
     ('05_髖關節與臀部', r'髋|臀|梨状|内收肌|大腿后侧|腘绳'),
     ('06_膝蓋與腿型', r'膝|腿型|大小腿|[OXox]型|胫骨|股骨|股四头|大腿前侧'),
     ('07_足踝與步態', r'足|脚|踝|步态|走路|行走|步行'),
-    ('08_肩頸與肩胛', r'肩|脖|颈|斜方|前锯|背阔'),
+    ('08_肩頸與肩胛', r'肩|脖|颈|斜方|前锯|背阔|胸锁乳突|斜角肌'),
     ('09_胸廓與胸椎', r'胸|肋|后背|胸曲|上背'),
     ('10_脊椎與腰背', r'脊|腰|椎|侧弯|圆背|驼背'),
     ('11_核心與腹部', r'核心|腹直|腹斜|腹肌|腹横'),
     ('12_力量訓練與動作', r'深蹲|硬拉|卧推|推举|弯举|划船|大重量|力量|引体|增肌|分化|死肌肉|猛男体能'),
     ('13_放鬆熱身與活動度', r'泡沫轴|松解|放松|热身|拉伸|恢复|灵活|挤压|爬行|柔韧'),
     ('14_案例與回饋', r'反馈|案例|学员|前后对比'),
-    ('17_營養飲食與身體組成', r'营养|蛋白|饮食|摄入|补剂|热量|食物|脂肪|体脂|GI|GL|胚型|身材|睾酮|铁元素|矿物质|钙|BMI|bmi|肌酸|咖啡因'),
+    ('17_營養飲食與身體組成', r'营养|蛋白|饮食|摄入|补剂|热量|食物|脂肪|体脂|GI|GL|胚型|身材|睾酮|铁元素|矿物质|钙|BMI|bmi|肌酸(?!胀|痛)|咖啡因'),
     ('18_睡眠情緒與神經', r'睡眠|多巴胺|内啡肽|焦虑|情绪|压力|神经'),
     ('19_不適與恢復觀念', r'疼痛|关节不适|损伤|乳酸'),
     ('20_創作者日常與交流', r'奇葩|评论区|提意见|大家.*意见|粉丝|体能挑战'),
@@ -64,8 +64,17 @@ def browser(*args, timeout=45):
 
 def classify(title):
     tags = [name for name, pattern in RULES if re.search(pattern, title)]
-    # 案例優先獨立，避免把只有回饋照片的作品混進教學。
-    primary = '14_案例與回饋' if '14_案例與回饋' in tags else (tags[0] if tags else '16_待人工分類')
+    # 原標題比泛用hashtag優先，避免「營養增肌」因標籤被混入動作教學。
+    subject=title.split('#',1)[0]
+    direct=[name for name,pattern in RULES if re.search(pattern,subject)]
+    priorities=['14_案例與回饋','17_營養飲食與身體組成','18_睡眠情緒與神經',
+                '20_創作者日常與交流','03_骨盆旋轉與不對稱','04_骨盆前後傾',
+                '05_髖關節與臀部','06_膝蓋與腿型','07_足踝與步態','08_肩頸與肩胛',
+                '09_胸廓與胸椎','10_脊椎與腰背','11_核心與腹部','02_呼吸與腹壓',
+                '01_評估與自我檢查','12_力量訓練與動作','13_放鬆熱身與活動度',
+                '19_不適與恢復觀念','15_整體觀念']
+    primary=next((name for name in priorities if name in direct),
+                 next((name for name in priorities if name in tags),'16_待人工分類'))
     return primary, tags
 
 def collect(max_rounds=130):
@@ -101,7 +110,7 @@ def collect(max_rounds=130):
                 group, tags = classify(title)
                 images = item.get('images') or []
                 entries[ident] = {'id':ident, 'title':title, 'url':f'https://www.douyin.com/video/{ident}',
-                    'created':item.get('create_time'), 'date':dt.datetime.fromtimestamp(item['create_time'],dt.timezone.utc).isoformat(),
+                    'created':item.get('create_time'), 'date':dt.datetime.fromtimestamp(item['create_time'],dt.timezone(dt.timedelta(hours=8))).isoformat(),
                     'duration_ms':video.get('duration',item.get('duration',0)),
                     'width':video.get('width'), 'height':video.get('height'),
                     'type':'photo' if images else 'video', 'aweme_type':item.get('aweme_type'),
@@ -245,18 +254,33 @@ def merge(destination,max_minutes=45,category=None):
             segments=[];chapters=[];offset=0;index=[]
             for order,(item,status) in enumerate(batch,1):
                 segment=temp/f'{order:04d}.mp4'
+                if segment.exists():
+                    try:
+                        existing=probe(segment)
+                        if abs(existing['duration']-status['duration'])>max(2,status['duration']*.03):
+                            segment.unlink()
+                    except RuntimeError:
+                        segment.unlink()
                 if not segment.exists():
                     # 統一尺寸、幀率與聲音格式，保留直式畫面，橫式加留白。
                     vf='scale=720:1280:force_original_aspect_ratio=decrease:force_divisible_by=2,pad=720:1280:(ow-iw)/2:(oh-ih)/2,setsar=1,fps=30'
                     args=[str(FFMPEG),'-hide_banner','-loglevel','error','-nostdin','-y','-i',status['path']]
                     if not status['audio']:
                         args+=['-f','lavfi','-i','anullsrc=r=48000:cl=stereo','-shortest']
+                    segment_partial=segment.with_suffix('.partial.mp4')
                     args+=['-map','0:v:0','-map','0:a:0' if status['audio'] else '1:a:0','-vf',vf,
                            '-c:v','h264_videotoolbox','-b:v','2500k','-pix_fmt','yuv420p',
-                           '-c:a','aac','-b:a','128k','-ar','48000','-ac','2','-movflags','+faststart',str(segment)]
+                           '-c:a','aac','-b:a','128k','-ar','48000','-ac','2','-movflags','+faststart',str(segment_partial)]
                     p=subprocess.run(args,capture_output=True,text=True)
                     if p.returncode:
+                        args[args.index('h264_videotoolbox')]='libx264'
+                        bitrate=args.index('-b:v')
+                        args[bitrate:bitrate+2]=['-crf','22','-preset','veryfast']
+                        p=subprocess.run(args,capture_output=True,text=True)
+                    if p.returncode:
                         raise RuntimeError('轉碼失敗：'+p.stderr[-400:])
+                    probe(segment_partial)
+                    segment_partial.replace(segment)
                 length=probe(segment)['duration']
                 start=round(offset*1000);end=round((offset+length)*1000)
                 title=item['title'].split('#',1)[0].strip()

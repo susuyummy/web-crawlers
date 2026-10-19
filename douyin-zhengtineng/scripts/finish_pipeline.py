@@ -29,7 +29,17 @@ def run(wait_pid):
         archive.download(archive.DEST,workers=6)
     status=library.render()
     print('開始建立所有分類合輯',flush=True)
-    archive.merge(archive.DEST)
+    inventory=archive.read(archive.INVENTORY,{})
+    groups=sorted({v['category'] for v in inventory.get('videos',[]) if v['type']=='video'})
+    errors={}
+    for group in groups:
+        try:
+            archive.merge(archive.DEST,category=group)
+        except Exception as exc:
+            errors[group]=str(exc)
+            print('合輯失敗，繼續其他主題：'+group+'；'+str(exc),flush=True)
+        library.render()
+    archive.write(archive.DEST/'處理紀錄'/'merge-errors.json',errors)
     status=library.render()
     archive.write(archive.DEST/'處理紀錄'/'pipeline-result.json',status)
     print('處理結束：'+str({k:status[k] for k in ['videos','downloaded','failed','compilations','merged_videos','all_visible_videos_merged']}),flush=True)
